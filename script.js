@@ -24,31 +24,43 @@ for (let i = 97; i <= 122; i++) {
   let btn = document.createElement("button");
   btn.textContent = String.fromCharCode(i);
   btn.onclick = () => guessLetter(btn.textContent);
+  btn.id = `key-${btn.textContent}`;
   keyboard.appendChild(btn);
 }
 
 function guessLetter(letter) {
   if (selectedWord.includes(letter)) {
-      for (let i = 0; i < selectedWord.length; i++) {
-          if (selectedWord[i] === letter) guessedWord[i] = letter;
-      }
+    for (let i = 0; i < selectedWord.length; i++) {
+      if (selectedWord[i] === letter) guessedWord[i] = letter;
+    }
   } else {
-      wrongGuesses++;
-      document.getElementById("hangman-img").src = `hangman-${wrongGuesses}.svg`;
+    wrongGuesses++;
+    document.getElementById("hangman-img").src = `hangman-${wrongGuesses}.svg`;
   }
+
   document.getElementById("word-display").textContent = guessedWord.join(" ");
 
   if (!guessedWord.includes("_")) {
-      document.getElementById("message").textContent = "🎉 You Win!";
-      document.getElementById("hangman-img").src = "victory.gif"; 
-      disableKeyboard();
+    document.getElementById("message").textContent = "🎉 You Win!";
+    document.getElementById("hangman-img").src = "victory.gif";
+    disableKeyboard();
   } else if (wrongGuesses >= 6) {
-      document.getElementById("message").textContent = "😢 Game Over!";
-      document.getElementById("hangman-img").src = "lost.gif";
-      disableKeyboard();
+    document.getElementById("message").textContent = "😢 Game Over!";
+    document.getElementById("hangman-img").src = "lost.gif";
+    disableKeyboard();
   }
+
+  document.getElementById(`key-${letter}`).disabled = true;
 }
 
+
+document.addEventListener("keydown", (event) => {
+  let letter = event.key.toLowerCase();
+  if (letter >= "a" && letter <= "z" && !document.getElementById(`key-${letter}`).disabled) {
+    guessLetter(letter);
+  }
+});
+
 function disableKeyboard() {
-  document.querySelectorAll(".keyboard button").forEach(button => button.disabled = true);
+  document.querySelectorAll("#keyboard button").forEach(button => button.disabled = true);
 }
